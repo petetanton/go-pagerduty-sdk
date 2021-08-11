@@ -5,3 +5,4 @@
 - Retries 429s on your behalf
 - Do pagination on your behalf
 - Provide optional caching for specific read only api calls
+- Abstract away some PagerDuty weirdness (/tags I am looking at you)
