@@ -1,0 +1,17 @@
+name: "push"
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 2
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v2
+      - name: Make tag
+        id: tag-maker
+        run: |
+          short=$(echo "${GITHUB_SHA}" | cut -c1-9)
+          echo "::set-output name=DOCKER_TAG::${short}"
+      - name: Test
+        run: go test ./... -v
