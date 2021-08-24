@@ -1,4 +1,4 @@
-package pkg
+package pagerduty
 
 type User struct {
 	ApiObject

@@ -1,4 +1,4 @@
-package pkg
+package pagerduty
 
 import (
 	"bytes"
@@ -171,7 +171,7 @@ func (r *PagerDutyResponse) unmarshallResponse(out interface{}, path string) err
 	return json.Unmarshal(r.body.Path(path).Bytes(), out)
 }
 
-func (r *Client) objectToJson(in interface{}, path string) (io.Reader, error) {
+func (c *Client) objectToJson(in interface{}, path string) (io.Reader, error) {
 	container := gabs.New()
 	_, err := container.Set(in, path)
 	if err != nil {
@@ -182,6 +182,6 @@ func (r *Client) objectToJson(in interface{}, path string) (io.Reader, error) {
 		return nil, err
 	}
 
-	r.cfg.Logger.Debug(string(b))
+	c.cfg.Logger.Debug(string(b))
 	return bytes.NewReader(b), nil
 }

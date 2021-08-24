@@ -1,4 +1,4 @@
-package pkg
+package pagerduty
 
 type EscalationPolicy struct {
 	ApiObject
