@@ -11,7 +11,6 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -119,12 +118,6 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 
 	if response.StatusCode >= http.StatusBadRequest {
 		b, _ := ioutil.ReadAll(response.Body)
-		if response.StatusCode == http.StatusBadRequest && strings.Contains(string(b), "<title>400 Bad Request</title>") {
-			c.cfg.Logger.Infof("got an NGINX 400 for %s %s, retrying", r.Method, r.URL.String())
-			time.Sleep(time.Second * 30)
-			return c.do(r)
-
-		}
 		c.cfg.Logger.Errorf("Error on request to %s %s", r.Method, r.URL.String())
 		return nil, fmt.Errorf("got a %d response from PagerDuty with error: %s", response.StatusCode, string(b))
 	}
