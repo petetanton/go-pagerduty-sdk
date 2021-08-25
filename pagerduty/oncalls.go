@@ -8,9 +8,9 @@ import (
 
 type onCallRequest struct {
 	PagerDutyRequest
-	UserIds []string `json:"user_ids"`
-	Since   string   `json:"since"`
-	Unitl   string   `json:"until"`
+	UserIds []string `json:"user_ids,omitempty,brackets"`
+	Since   string   `json:"since,omitempty"`
+	Unitl   string   `json:"until,omitempty"`
 }
 
 type OnCall struct {
