@@ -8,9 +8,9 @@ import (
 
 type onCallRequest struct {
 	PagerDutyRequest
-	UserIds []string `json:"user_ids,omitempty,brackets"`
-	Since   string   `json:"since,omitempty"`
-	Unitl   string   `json:"until,omitempty"`
+	UserIds []string `url:"user_ids,omitempty,brackets"`
+	Since   string   `url:"since,omitempty"`
+	Until   string   `url:"until,omitempty"`
 }
 
 type OnCall struct {
@@ -35,7 +35,7 @@ func (c *Client) ListOnCallsForUsers(userIds []string, since, until time.Time) (
 			},
 			UserIds: userIds,
 			Since:   since.String(),
-			Unitl:   until.String(),
+			Until:   until.String(),
 		})
 		if err != nil {
 			return nil, err
