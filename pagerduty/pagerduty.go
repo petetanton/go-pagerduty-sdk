@@ -111,7 +111,7 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	}
 
 	if response.StatusCode == http.StatusTooManyRequests {
-		c.cfg.Logger.Info("retrying due to 429")
+		c.cfg.Logger.Debug("retrying due to 429")
 		time.Sleep(time.Second * 30)
 		return c.do(r)
 	}
