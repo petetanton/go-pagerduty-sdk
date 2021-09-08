@@ -3,6 +3,7 @@ package pagerduty
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 func (c *Client) GetTeam(id string) (*Team, error) {
@@ -38,4 +39,13 @@ func (c *Client) GetTeamMembers(id string) ([]*TeamMembership, error) {
 	}
 
 	return teamMemberships, nil
+}
+
+func (c *Client) AddUserToTeam(teamId, userId, role string) error {
+	_, err := c.put(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeTeams, teamId, TypeUsers, userId), strings.NewReader(fmt.Sprintf("{\"role\":\"%s\"}", role)))
+	return err
+}
+
+func (c *Client) RemoveUserFromTeam(teamId, userId string) error {
+	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeTeams, teamId, TypeUsers, userId))
 }

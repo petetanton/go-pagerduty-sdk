@@ -21,9 +21,19 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 	return out, err
 }
 
-func (c *Client) GetUser() {
-	//	https://developer.pagerduty.com/api-reference/reference/REST/openapiv3.json/paths/~1users~1%7Bid%7D/get
-	panic("not implemented")
+func (c *Client) GetUser(id string) (*User, error) {
+	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeUsers, id), DefaultPagerDutyRequest())
+	if err != nil {
+		return nil, err
+	}
+
+	var user *User
+	err = response.unmarshallResponse(&user, TypeUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (c *Client) ListUsers() ([]*User, error) {
@@ -52,9 +62,25 @@ func (c *Client) ListUsers() ([]*User, error) {
 	return users, err
 }
 
-func (c *Client) UpdateUser() {
-	//	https://developer.pagerduty.com/api-reference/reference/REST/openapiv3.json/paths/~1users~1%7Bid%7D/put
-	panic("not implemented")
+func (c *Client) UpdateUser(user *User) (*User, error) {
+	user.Type = TypeUser
+	reader, err := c.objectToJson(user, TypeUser)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeUsers, user.Id), reader)
+	if err != nil {
+		return nil, err
+	}
+
+	var out *User
+	err = response.unmarshallResponse(&out, TypeUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
 }
 
 func (c *Client) DeleteUser(id string) error {
