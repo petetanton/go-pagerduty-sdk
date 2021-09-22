@@ -10,7 +10,7 @@ type Service struct {
 	EscalationPolicy        *ApiObject               `json:"escalation_policy,omitempty"`
 	IncidentUrgencyRule     *IncidentUrgencyRule     `json:"incident_urgency_rule,omitempty"`
 	SupportHours            *SupportHours            `json:"support_hours,omitempty"`
-	ScheduledActions        *ScheduledActions        `json:"scheduled_actions,omitempty"`
+	ScheduledActions        *[]ScheduledAction       `json:"scheduled_actions,omitempty"`
 	AlertCreation           string                   `json:"alert_creation"`
 	AlertGroupingParameters *AlertGroupingParameters `json:"alert_grouping_parameters,omitempty"`
 }
@@ -29,7 +29,7 @@ type SupportHours struct {
 	DaysOfWeek []uint `json:"days_of_week"`
 }
 
-type ScheduledActions struct {
+type ScheduledAction struct {
 	Type      string            `json:"type"`
 	At        map[string]string `json:"at"`
 	ToUrgency string            `json:"to_urgency"`
