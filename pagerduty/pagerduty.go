@@ -23,6 +23,8 @@ const (
 	TypeTags               = "tags"
 	TypeUser               = "user"
 	TypeUsers              = "users"
+	TypeService            = "service"
+	TypeServices           = "services"
 )
 
 type Client struct {
