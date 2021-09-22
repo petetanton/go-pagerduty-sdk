@@ -14,7 +14,7 @@ func (c *Client) CreateService(service *Service) (*Service, error) {
 	}
 
 	var out *Service
-	err = response.unmarshallResponse(&out, TypeUser)
+	err = response.unmarshallResponse(&out, TypeService)
 
 	return out, err
 }
@@ -49,7 +49,7 @@ func (c *Client) ListServices() ([]*Service, error) {
 		}
 
 		var innerServices []*Service
-		err = response.unmarshallResponse(&innerServices, TypeUsers)
+		err = response.unmarshallResponse(&innerServices, TypeServices)
 		if err != nil {
 			return nil, err
 		}
