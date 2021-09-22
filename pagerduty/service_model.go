@@ -10,7 +10,7 @@ type Service struct {
 	EscalationPolicy        *ApiObject               `json:"escalation_policy,omitempty"`
 	IncidentUrgencyRule     *IncidentUrgencyRule     `json:"incident_urgency_rule,omitempty"`
 	SupportHours            *SupportHours            `json:"support_hours,omitempty"`
-	ScheduledActions        *[]ScheduledAction       `json:"scheduled_actions,omitempty"`
+	ScheduledActions        []*ScheduledAction       `json:"scheduled_actions,omitempty"`
 	AlertCreation           string                   `json:"alert_creation"`
 	AlertGroupingParameters *AlertGroupingParameters `json:"alert_grouping_parameters,omitempty"`
 }
