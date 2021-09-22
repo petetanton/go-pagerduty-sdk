@@ -16,9 +16,15 @@ type Service struct {
 }
 
 type IncidentUrgencyRule struct {
-	Type                string            `json:"type"`
-	DuringSupportHours  map[string]string `json:"during_support_hours"`
-	OutsideSupportHours map[string]string `json:"outside_support_hours"`
+	Type                string                   `json:"type"`
+	Urgency             string                   `json:"urgency,omitempty"`
+	DuringSupportHours  *SupportHoursUrgencyRule `json:"during_support_hours,omitempty"`
+	OutsideSupportHours *SupportHoursUrgencyRule `json:"outside_support_hours,omitempty"`
+}
+
+type SupportHoursUrgencyRule struct {
+	Type    string `json:"type"`
+	Urgency string `json:"urgency"`
 }
 
 type SupportHours struct {
