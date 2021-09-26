@@ -2,13 +2,13 @@ package pagerduty
 
 import "fmt"
 
-func (c *Client) CreateSchedule(schedule *Schedule) (*Schedule, error) {
+func (c *Client) CreateSchedule(schedule *Schedule, overflow bool) (*Schedule, error) {
 	reader, err := c.objectToJson(schedule, TypeSchedule)
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := c.post(fmt.Sprintf("%s/%s", c.cfg.ApiUrl, TypeSchedules), reader)
+	response, err := c.post(fmt.Sprintf("%s/%s?overflow=%t", c.cfg.ApiUrl, TypeSchedules, overflow), reader)
 	if err != nil {
 		return nil, err
 	}
@@ -60,14 +60,14 @@ func (c *Client) ListSchedule() ([]*Schedule, error) {
 	return services, err
 }
 
-func (c *Client) UpdateSchedule(service *Schedule) (*Schedule, error) {
+func (c *Client) UpdateSchedule(service *Schedule, overflow bool) (*Schedule, error) {
 	service.Type = TypeSchedule
 	reader, err := c.objectToJson(service, TypeSchedule)
 	if err != nil {
 		return nil, err
 	}
 
-	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeSchedules, service.Id), reader)
+	response, err := c.put(fmt.Sprintf("%s/%s/%s?overflow=%t", c.cfg.ApiUrl, TypeSchedules, service.Id, overflow), reader)
 	if err != nil {
 		return nil, err
 	}
