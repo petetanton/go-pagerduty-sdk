@@ -15,3 +15,10 @@ type User struct {
 	ContactMethods    []*ApiObject `json:"contact_methods,omitempty"`
 	NotificationRules []*ApiObject `json:"notification_rules"`
 }
+
+type NotificationRule struct {
+	ApiObject
+	StartDelayInMinutes uint      `json:"start_delay_in_minutes"`
+	ContactMethod       ApiObject `json:"contact_method"`
+	Urgency             string    `json:"urgency"`
+}

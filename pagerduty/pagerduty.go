@@ -25,6 +25,11 @@ const (
 	TypeUsers              = "users"
 	TypeService            = "service"
 	TypeServices           = "services"
+	TypeSchedule           = "schedule"
+	TypeSchedules          = "schedules"
+	TypeNotificationRule   = "notification_rule"
+	TypeNotificationRules  = "notification_rules"
+	TypeContactMethods     = "contact_methods"
 )
 
 type Client struct {
