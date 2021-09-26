@@ -99,7 +99,19 @@ func (c *Client) CreateUserNotificationRule(userId string, rule *NotificationRul
 	}
 
 	var out *NotificationRule
-	err = response.unmarshallResponse(&out, TypeUser)
+	err = response.unmarshallResponse(&out, TypeNotificationRule)
+
+	return out, err
+}
+
+func (c *Client) GetUserNotificationRule(userId, notificationRuleId string) (*NotificationRule, error) {
+	response, err := c.get(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeNotificationRules, notificationRuleId), DefaultPagerDutyRequest())
+	if err != nil {
+		return nil, err
+	}
+
+	var out *NotificationRule
+	err = response.unmarshallResponse(&out, TypeNotificationRule)
 
 	return out, err
 }
@@ -151,6 +163,6 @@ func (c *Client) UpdateNotificationRule(user *User, notificationRule *Notificati
 	return out, nil
 }
 
-func (c *Client) DeleteNotificationRule(user *User, notificationRule *NotificationRule) error {
-	return c.delete(fmt.Sprintf("%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, user.Id, TypeNotificationRules))
+func (c *Client) DeleteNotificationRule(userId, notificationRuleId string) error {
+	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeNotificationRules, notificationRuleId))
 }
