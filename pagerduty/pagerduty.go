@@ -29,7 +29,10 @@ const (
 	TypeSchedules          = "schedules"
 	TypeNotificationRule   = "notification_rule"
 	TypeNotificationRules  = "notification_rules"
+	TypeContactMethod      = "contact_method"
 	TypeContactMethods     = "contact_methods"
+	TypeResponsePlay       = "response_play"
+	TypeResponsePlays      = "response_plays"
 )
 
 type Client struct {

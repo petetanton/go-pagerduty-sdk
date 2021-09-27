@@ -166,3 +166,56 @@ func (c *Client) UpdateNotificationRule(user *User, notificationRule *Notificati
 func (c *Client) DeleteNotificationRule(userId, notificationRuleId string) error {
 	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeNotificationRules, notificationRuleId))
 }
+
+func (c *Client) CreateUserContactMethod(userId string, contactMethod *ContactMethod) (*ContactMethod, error) {
+	reader, err := c.objectToJson(contactMethod, TypeContactMethod)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.post(fmt.Sprintf("%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeContactMethods), reader)
+	if err != nil {
+		return nil, err
+	}
+
+	var out *ContactMethod
+	err = response.unmarshallResponse(&out, TypeContactMethod)
+
+	return out, err
+}
+
+func (c *Client) UpdateUserContactMethod(user *User, contactMethod *ContactMethod) (*ContactMethod, error) {
+	reader, err := c.objectToJson(contactMethod, TypeContactMethod)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.put(fmt.Sprintf("%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, user.Id, TypeContactMethods), reader)
+	if err != nil {
+		return nil, err
+	}
+
+	var out *ContactMethod
+	err = response.unmarshallResponse(&out, TypeContactMethod)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+func (c *Client) DeleteUserContactMethod(userId, contactMethodId string) error {
+	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeContactMethods, contactMethodId))
+}
+
+func (c *Client) GetUserContactMethod(userId, contactMethodId string) (*ContactMethod, error) {
+	response, err := c.get(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeContactMethods, contactMethodId), DefaultPagerDutyRequest())
+	if err != nil {
+		return nil, err
+	}
+
+	var out *ContactMethod
+	err = response.unmarshallResponse(&out, TypeContactMethod)
+
+	return out, err
+}

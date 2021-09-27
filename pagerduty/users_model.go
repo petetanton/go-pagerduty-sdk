@@ -22,3 +22,27 @@ type NotificationRule struct {
 	ContactMethod       ApiObject `json:"contact_method"`
 	Urgency             string    `json:"urgency"`
 }
+
+type ContactMethod struct {
+	ApiObject
+	Label       string `json:"label,omitempty"`
+	Address     string `json:"address,omitempty"`
+	BlackListed bool   `json:"blacklisted,omitempty"`
+
+	// Email contact method options
+	SendShortEmail bool `json:"send_short_email,omitempty"`
+
+	// Phone contact method options
+	CountryCode int  `json:"country_code,omitempty"`
+	Enabled     bool `json:"enabled,omitempty"`
+
+	// Push contact method options
+	DeviceType string                    `json:"device_type,omitempty"`
+	Sounds     []*PushContactMethodSound `json:"sounds,omitempty"`
+	CreatedAt  string                    `json:"created_at,omitempty"`
+}
+
+type PushContactMethodSound struct {
+	Type string `json:"type,omitempty"`
+	File string `json:"file,omitempty"`
+}
