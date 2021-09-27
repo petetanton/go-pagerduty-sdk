@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -41,9 +42,10 @@ type Client struct {
 }
 
 type Config struct {
-	ApiToken string
-	ApiUrl   string
-	Logger   logrus.FieldLogger
+	ApiToken   string
+	ApiUrl     string
+	FromHeader string
+	Logger     logrus.FieldLogger
 }
 
 type ApiObject struct {
@@ -115,6 +117,11 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	c.cfg.Logger.Debugf("%s: %s", r.Method, r.URL.String())
 	r.Header.Add("Authorization", fmt.Sprintf("Token token=%s", c.cfg.ApiToken))
 	r.Header.Add("Content-Type", "application/json")
+
+	if c.cfg.FromHeader != "" && strings.Contains(r.URL.String(), TypeResponsePlay) {
+		r.Header.Add("From", c.cfg.FromHeader)
+	}
+
 	response, err := c.h.Do(r)
 	if err != nil {
 		return nil, err
