@@ -18,9 +18,9 @@ type User struct {
 
 type NotificationRule struct {
 	ApiObject
-	StartDelayInMinutes uint      `json:"start_delay_in_minutes"`
-	ContactMethod       ApiObject `json:"contact_method"`
-	Urgency             string    `json:"urgency"`
+	StartDelayInMinutes uint       `json:"start_delay_in_minutes"`
+	ContactMethod       *ApiObject `json:"contact_method"`
+	Urgency             string     `json:"urgency"`
 }
 
 type ContactMethod struct {
