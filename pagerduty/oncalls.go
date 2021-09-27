@@ -3,6 +3,7 @@ package pagerduty
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 	"time"
 )
 
@@ -13,16 +14,8 @@ type onCallRequest struct {
 	Until   string   `url:"until,omitempty"`
 }
 
-type OnCall struct {
-	UserReference             ApiObject `json:"user"`
-	ScheduleReference         ApiObject `json:"schedule"`
-	EscalationPolicyReference ApiObject `json:"escalation_policy"`
-	Start                     string    `json:"start"`
-	End                       string    `json:"end"`
-}
-
-func (c *Client) ListOnCallsForUsers(userIds []string, since, until time.Time) ([]*OnCall, error) {
-	var onCalls []*OnCall
+func (c *Client) ListOnCallsForUsers(userIds []string, since, until time.Time) ([]*model.OnCall, error) {
+	var onCalls []*model.OnCall
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -41,7 +34,7 @@ func (c *Client) ListOnCallsForUsers(userIds []string, since, until time.Time) (
 			return nil, err
 		}
 
-		var responseOncalls []*OnCall
+		var responseOncalls []*model.OnCall
 
 		err = json.Unmarshal(response.body.Path("oncalls").Bytes(), &responseOncalls)
 		if err != nil {

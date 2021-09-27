@@ -1,8 +1,11 @@
 package pagerduty
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
+)
 
-func (c *Client) CreateSchedule(schedule *Schedule, overflow bool) (*Schedule, error) {
+func (c *Client) CreateSchedule(schedule *model.Schedule, overflow bool) (*model.Schedule, error) {
 	reader, err := c.objectToJson(schedule, TypeSchedule)
 	if err != nil {
 		return nil, err
@@ -13,19 +16,19 @@ func (c *Client) CreateSchedule(schedule *Schedule, overflow bool) (*Schedule, e
 		return nil, err
 	}
 
-	var out *Schedule
+	var out *model.Schedule
 	err = response.unmarshallResponse(&out, TypeSchedule)
 
 	return out, err
 }
 
-func (c *Client) GetSchedule(id string) (*Schedule, error) {
+func (c *Client) GetSchedule(id string) (*model.Schedule, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeSchedules, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var service *Schedule
+	var service *model.Schedule
 	err = response.unmarshallResponse(&service, TypeSchedule)
 	if err != nil {
 		return nil, err
@@ -34,8 +37,8 @@ func (c *Client) GetSchedule(id string) (*Schedule, error) {
 	return service, nil
 }
 
-func (c *Client) ListSchedule() ([]*Schedule, error) {
-	var services []*Schedule
+func (c *Client) ListSchedule() ([]*model.Schedule, error) {
+	var services []*model.Schedule
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -48,7 +51,7 @@ func (c *Client) ListSchedule() ([]*Schedule, error) {
 			return nil, err
 		}
 
-		var innerServices []*Schedule
+		var innerServices []*model.Schedule
 		err = response.unmarshallResponse(&innerServices, TypeSchedules)
 		if err != nil {
 			return nil, err
@@ -60,7 +63,7 @@ func (c *Client) ListSchedule() ([]*Schedule, error) {
 	return services, err
 }
 
-func (c *Client) UpdateSchedule(service *Schedule, overflow bool) (*Schedule, error) {
+func (c *Client) UpdateSchedule(service *model.Schedule, overflow bool) (*model.Schedule, error) {
 	service.Type = TypeSchedule
 	reader, err := c.objectToJson(service, TypeSchedule)
 	if err != nil {
@@ -72,7 +75,7 @@ func (c *Client) UpdateSchedule(service *Schedule, overflow bool) (*Schedule, er
 		return nil, err
 	}
 
-	var out *Schedule
+	var out *model.Schedule
 	err = response.unmarshallResponse(&out, TypeSchedule)
 	if err != nil {
 		return nil, err

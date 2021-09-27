@@ -2,9 +2,10 @@ package pagerduty
 
 import (
 	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
-func (c *Client) CreateUser(user *User) (*User, error) {
+func (c *Client) CreateUser(user *model.User) (*model.User, error) {
 	reader, err := c.objectToJson(user, TypeUser)
 	if err != nil {
 		return nil, err
@@ -15,29 +16,40 @@ func (c *Client) CreateUser(user *User) (*User, error) {
 		return nil, err
 	}
 
-	var out *User
+	var out *model.User
 	err = response.unmarshallResponse(&out, TypeUser)
+
+	c.userCache.WriteUser(out)
 
 	return out, err
 }
 
-func (c *Client) GetUser(id string) (*User, error) {
+func (c *Client) GetUser(id string) (*model.User, error) {
+	if c.shouldCacheType(TypeUser) {
+		user := c.userCache.ReadUser(id)
+		if user != nil {
+			return user, nil
+		}
+	}
+
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeUsers, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var user *User
+	var user *model.User
 	err = response.unmarshallResponse(&user, TypeUser)
 	if err != nil {
 		return nil, err
 	}
 
+	c.userCache.WriteUser(user)
+
 	return user, nil
 }
 
-func (c *Client) ListUsers() ([]*User, error) {
-	var users []*User
+func (c *Client) ListUsers() ([]*model.User, error) {
+	var users []*model.User
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -50,7 +62,7 @@ func (c *Client) ListUsers() ([]*User, error) {
 			return nil, err
 		}
 
-		var innerUser []*User
+		var innerUser []*model.User
 		err = response.unmarshallResponse(&innerUser, TypeUsers)
 		if err != nil {
 			return nil, err
@@ -59,10 +71,11 @@ func (c *Client) ListUsers() ([]*User, error) {
 		users = append(users, innerUser...)
 	}
 
+	c.userCache.WriteUsers(users)
 	return users, err
 }
 
-func (c *Client) UpdateUser(user *User) (*User, error) {
+func (c *Client) UpdateUser(user *model.User) (*model.User, error) {
 	user.Type = TypeUser
 	reader, err := c.objectToJson(user, TypeUser)
 	if err != nil {
@@ -74,20 +87,23 @@ func (c *Client) UpdateUser(user *User) (*User, error) {
 		return nil, err
 	}
 
-	var out *User
+	var out *model.User
 	err = response.unmarshallResponse(&out, TypeUser)
 	if err != nil {
 		return nil, err
 	}
 
+	c.userCache.WriteUser(out)
+
 	return out, nil
 }
 
 func (c *Client) DeleteUser(id string) error {
+	c.userCache.RemoveUser(id)
 	return c.delete(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeUsers, id))
 }
 
-func (c *Client) CreateUserNotificationRule(userId string, rule *NotificationRule) (*NotificationRule, error) {
+func (c *Client) CreateUserNotificationRule(userId string, rule *model.NotificationRule) (*model.NotificationRule, error) {
 	reader, err := c.objectToJson(rule, TypeNotificationRule)
 	if err != nil {
 		return nil, err
@@ -98,26 +114,26 @@ func (c *Client) CreateUserNotificationRule(userId string, rule *NotificationRul
 		return nil, err
 	}
 
-	var out *NotificationRule
+	var out *model.NotificationRule
 	err = response.unmarshallResponse(&out, TypeNotificationRule)
 
 	return out, err
 }
 
-func (c *Client) GetUserNotificationRule(userId, notificationRuleId string) (*NotificationRule, error) {
+func (c *Client) GetUserNotificationRule(userId, notificationRuleId string) (*model.NotificationRule, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeNotificationRules, notificationRuleId), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var out *NotificationRule
+	var out *model.NotificationRule
 	err = response.unmarshallResponse(&out, TypeNotificationRule)
 
 	return out, err
 }
 
-func (c *Client) ListUsersNotificationRules(userId string) ([]*NotificationRule, error) {
-	var notificationRules []*NotificationRule
+func (c *Client) ListUsersNotificationRules(userId string) ([]*model.NotificationRule, error) {
+	var notificationRules []*model.NotificationRule
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -131,7 +147,7 @@ func (c *Client) ListUsersNotificationRules(userId string) ([]*NotificationRule,
 			return nil, err
 		}
 
-		var innerRule []*NotificationRule
+		var innerRule []*model.NotificationRule
 		err = response.unmarshallResponse(&innerRule, TypeNotificationRules)
 		if err != nil {
 			return nil, err
@@ -143,7 +159,7 @@ func (c *Client) ListUsersNotificationRules(userId string) ([]*NotificationRule,
 	return notificationRules, err
 }
 
-func (c *Client) UpdateNotificationRule(user *User, notificationRule *NotificationRule) (*NotificationRule, error) {
+func (c *Client) UpdateNotificationRule(user *model.User, notificationRule *model.NotificationRule) (*model.NotificationRule, error) {
 	reader, err := c.objectToJson(notificationRule, TypeNotificationRule)
 	if err != nil {
 		return nil, err
@@ -154,7 +170,7 @@ func (c *Client) UpdateNotificationRule(user *User, notificationRule *Notificati
 		return nil, err
 	}
 
-	var out *NotificationRule
+	var out *model.NotificationRule
 	err = response.unmarshallResponse(&out, TypeNotificationRule)
 	if err != nil {
 		return nil, err
@@ -167,7 +183,7 @@ func (c *Client) DeleteNotificationRule(userId, notificationRuleId string) error
 	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeNotificationRules, notificationRuleId))
 }
 
-func (c *Client) CreateUserContactMethod(userId string, contactMethod *ContactMethod) (*ContactMethod, error) {
+func (c *Client) CreateUserContactMethod(userId string, contactMethod *model.ContactMethod) (*model.ContactMethod, error) {
 	reader, err := c.objectToJson(contactMethod, TypeContactMethod)
 	if err != nil {
 		return nil, err
@@ -178,13 +194,13 @@ func (c *Client) CreateUserContactMethod(userId string, contactMethod *ContactMe
 		return nil, err
 	}
 
-	var out *ContactMethod
+	var out *model.ContactMethod
 	err = response.unmarshallResponse(&out, TypeContactMethod)
 
 	return out, err
 }
 
-func (c *Client) UpdateUserContactMethod(user *User, contactMethod *ContactMethod) (*ContactMethod, error) {
+func (c *Client) UpdateUserContactMethod(user *model.User, contactMethod *model.ContactMethod) (*model.ContactMethod, error) {
 	reader, err := c.objectToJson(contactMethod, TypeContactMethod)
 	if err != nil {
 		return nil, err
@@ -195,7 +211,7 @@ func (c *Client) UpdateUserContactMethod(user *User, contactMethod *ContactMetho
 		return nil, err
 	}
 
-	var out *ContactMethod
+	var out *model.ContactMethod
 	err = response.unmarshallResponse(&out, TypeContactMethod)
 	if err != nil {
 		return nil, err
@@ -208,13 +224,13 @@ func (c *Client) DeleteUserContactMethod(userId, contactMethodId string) error {
 	return c.delete(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeContactMethods, contactMethodId))
 }
 
-func (c *Client) GetUserContactMethod(userId, contactMethodId string) (*ContactMethod, error) {
+func (c *Client) GetUserContactMethod(userId, contactMethodId string) (*model.ContactMethod, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeUsers, userId, TypeContactMethods, contactMethodId), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var out *ContactMethod
+	var out *model.ContactMethod
 	err = response.unmarshallResponse(&out, TypeContactMethod)
 
 	return out, err

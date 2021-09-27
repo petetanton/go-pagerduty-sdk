@@ -1,4 +1,4 @@
-package pagerduty
+package model
 
 type User struct {
 	ApiObject
@@ -45,4 +45,12 @@ type ContactMethod struct {
 type PushContactMethodSound struct {
 	Type string `json:"type,omitempty"`
 	File string `json:"file,omitempty"`
+}
+
+type OnCall struct {
+	UserReference             ApiObject `json:"user"`
+	ScheduleReference         ApiObject `json:"schedule"`
+	EscalationPolicyReference ApiObject `json:"escalation_policy"`
+	Start                     string    `json:"start"`
+	End                       string    `json:"end"`
 }

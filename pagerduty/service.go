@@ -1,8 +1,11 @@
 package pagerduty
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
+)
 
-func (c *Client) CreateService(service *Service) (*Service, error) {
+func (c *Client) CreateService(service *model.Service) (*model.Service, error) {
 	reader, err := c.objectToJson(service, TypeService)
 	if err != nil {
 		return nil, err
@@ -13,19 +16,19 @@ func (c *Client) CreateService(service *Service) (*Service, error) {
 		return nil, err
 	}
 
-	var out *Service
+	var out *model.Service
 	err = response.unmarshallResponse(&out, TypeService)
 
 	return out, err
 }
 
-func (c *Client) GetService(id string) (*Service, error) {
+func (c *Client) GetService(id string) (*model.Service, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeServices, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var service *Service
+	var service *model.Service
 	err = response.unmarshallResponse(&service, TypeService)
 	if err != nil {
 		return nil, err
@@ -34,8 +37,8 @@ func (c *Client) GetService(id string) (*Service, error) {
 	return service, nil
 }
 
-func (c *Client) ListServices() ([]*Service, error) {
-	var services []*Service
+func (c *Client) ListServices() ([]*model.Service, error) {
+	var services []*model.Service
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -48,7 +51,7 @@ func (c *Client) ListServices() ([]*Service, error) {
 			return nil, err
 		}
 
-		var innerServices []*Service
+		var innerServices []*model.Service
 		err = response.unmarshallResponse(&innerServices, TypeServices)
 		if err != nil {
 			return nil, err
@@ -60,7 +63,7 @@ func (c *Client) ListServices() ([]*Service, error) {
 	return services, err
 }
 
-func (c *Client) UpdateService(service *Service) (*Service, error) {
+func (c *Client) UpdateService(service *model.Service) (*model.Service, error) {
 	service.Type = TypeService
 	reader, err := c.objectToJson(service, TypeService)
 	if err != nil {
@@ -72,7 +75,7 @@ func (c *Client) UpdateService(service *Service) (*Service, error) {
 		return nil, err
 	}
 
-	var out *Service
+	var out *model.Service
 	err = response.unmarshallResponse(&out, TypeService)
 	if err != nil {
 		return nil, err

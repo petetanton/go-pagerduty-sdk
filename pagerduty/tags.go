@@ -3,10 +3,11 @@ package pagerduty
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
-func (c *Client) ListTags() ([]*Tag, error) {
-	var tags []*Tag
+func (c *Client) ListTags() ([]*model.Tag, error) {
+	var tags []*model.Tag
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -19,7 +20,7 @@ func (c *Client) ListTags() ([]*Tag, error) {
 			return nil, err
 		}
 
-		var responseTags []*Tag
+		var responseTags []*model.Tag
 
 		err = json.Unmarshal(response.body.Path(TypeTags).Bytes(), &responseTags)
 		if err != nil {
@@ -32,8 +33,8 @@ func (c *Client) ListTags() ([]*Tag, error) {
 	return tags, nil
 }
 
-func (c *Client) GetTaggedEntities(tagId, entityType string) ([]*ApiObject, error) {
-	var output []*ApiObject
+func (c *Client) GetTaggedEntities(tagId, entityType string) ([]*model.ApiObject, error) {
+	var output []*model.ApiObject
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -47,7 +48,7 @@ func (c *Client) GetTaggedEntities(tagId, entityType string) ([]*ApiObject, erro
 			return nil, err
 		}
 
-		var responseOutput []*ApiObject
+		var responseOutput []*model.ApiObject
 
 		err = json.Unmarshal(response.body.Path(entityType).Bytes(), &responseOutput)
 		if err != nil {

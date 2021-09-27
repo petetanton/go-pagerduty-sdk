@@ -1,4 +1,4 @@
-package pagerduty
+package model
 
 type ResponsePlay struct {
 	ApiObject

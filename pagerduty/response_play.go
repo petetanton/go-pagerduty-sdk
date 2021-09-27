@@ -2,10 +2,11 @@ package pagerduty
 
 import (
 	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 	"strings"
 )
 
-func (c *Client) CreateResponsePlay(responsePlay *ResponsePlay) (*ResponsePlay, error) {
+func (c *Client) CreateResponsePlay(responsePlay *model.ResponsePlay) (*model.ResponsePlay, error) {
 	reader, err := c.objectToJson(responsePlay, TypeResponsePlay)
 	if err != nil {
 		return nil, err
@@ -16,7 +17,7 @@ func (c *Client) CreateResponsePlay(responsePlay *ResponsePlay) (*ResponsePlay, 
 		return nil, err
 	}
 
-	var out *ResponsePlay
+	var out *model.ResponsePlay
 	err = response.unmarshallResponse(&out, TypeResponsePlay)
 
 	return out, err
@@ -26,13 +27,13 @@ func (c *Client) DeleteResponsePlay(responsePlayId string) error {
 	return c.delete(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeResponsePlays, responsePlayId))
 }
 
-func (c *Client) GetResponsePlay(id string) (*ResponsePlay, error) {
+func (c *Client) GetResponsePlay(id string) (*model.ResponsePlay, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeResponsePlays, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var responsePlay *ResponsePlay
+	var responsePlay *model.ResponsePlay
 	err = response.unmarshallResponse(&responsePlay, TypeResponsePlays)
 	if err != nil {
 		return nil, err
@@ -41,8 +42,8 @@ func (c *Client) GetResponsePlay(id string) (*ResponsePlay, error) {
 	return responsePlay, nil
 }
 
-func (c *Client) ListResponsePlays() ([]*ResponsePlay, error) {
-	var responsePlays []*ResponsePlay
+func (c *Client) ListResponsePlays() ([]*model.ResponsePlay, error) {
+	var responsePlays []*model.ResponsePlay
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -55,7 +56,7 @@ func (c *Client) ListResponsePlays() ([]*ResponsePlay, error) {
 			return nil, err
 		}
 
-		var innerResponsePlays []*ResponsePlay
+		var innerResponsePlays []*model.ResponsePlay
 		err = response.unmarshallResponse(&innerResponsePlays, TypeResponsePlays)
 		if err != nil {
 			return nil, err
@@ -82,7 +83,7 @@ func (c *Client) RunResponsePlay(responsePlayId, incidentId string) error {
 	return nil
 }
 
-func (c *Client) UpdateResponsePlay(responsePlay *ResponsePlay) (*ResponsePlay, error) {
+func (c *Client) UpdateResponsePlay(responsePlay *model.ResponsePlay) (*model.ResponsePlay, error) {
 	responsePlay.Type = TypeResponsePlay
 	reader, err := c.objectToJson(responsePlay, TypeResponsePlay)
 	if err != nil {
@@ -94,7 +95,7 @@ func (c *Client) UpdateResponsePlay(responsePlay *ResponsePlay) (*ResponsePlay, 
 		return nil, err
 	}
 
-	var out *ResponsePlay
+	var out *model.ResponsePlay
 	err = response.unmarshallResponse(&out, TypeResponsePlay)
 	if err != nil {
 		return nil, err

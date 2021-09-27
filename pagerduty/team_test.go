@@ -1,6 +1,7 @@
 package pagerduty
 
 import (
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 	"net/http"
 	"reflect"
 	"testing"
@@ -20,7 +21,7 @@ func Test_team(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := &Team{
+	want := &model.Team{
 		ApiObject{Id: "1"},
 	}
 

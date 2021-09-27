@@ -3,9 +3,10 @@ package pagerduty
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
-func (c *Client) CreateEscalationPolicy(policy *EscalationPolicy) (*EscalationPolicy, error) {
+func (c *Client) CreateEscalationPolicy(policy *model.EscalationPolicy) (*model.EscalationPolicy, error) {
 	policy.Type = TypeEscalationPolicy
 	reader, err := c.objectToJson(policy, TypeEscalationPolicy)
 	if err != nil {
@@ -17,7 +18,7 @@ func (c *Client) CreateEscalationPolicy(policy *EscalationPolicy) (*EscalationPo
 		return nil, err
 	}
 
-	var out *EscalationPolicy
+	var out *model.EscalationPolicy
 	err = response.unmarshallResponse(&out, TypeEscalationPolicy)
 	if err != nil {
 		return nil, err
@@ -30,13 +31,13 @@ func (c *Client) DeleteEscalationPolicy(id string) error {
 	return c.delete(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeEscalationPolicies, id))
 }
 
-func (c *Client) GetEscalationPolicy(id string) (*EscalationPolicy, error) {
+func (c *Client) GetEscalationPolicy(id string) (*model.EscalationPolicy, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeEscalationPolicies, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
 	}
 
-	var escalationPolicy *EscalationPolicy
+	var escalationPolicy *model.EscalationPolicy
 	err = response.unmarshallResponse(&escalationPolicy, TypeEscalationPolicy)
 	if err != nil {
 		return nil, err
@@ -45,7 +46,7 @@ func (c *Client) GetEscalationPolicy(id string) (*EscalationPolicy, error) {
 	return escalationPolicy, nil
 }
 
-func (c *Client) UpdateEscalationPolicy(policy *EscalationPolicy) (*EscalationPolicy, error) {
+func (c *Client) UpdateEscalationPolicy(policy *model.EscalationPolicy) (*model.EscalationPolicy, error) {
 	policy.Type = TypeEscalationPolicy
 	reader, err := c.objectToJson(policy, TypeEscalationPolicy)
 	if err != nil {
@@ -57,7 +58,7 @@ func (c *Client) UpdateEscalationPolicy(policy *EscalationPolicy) (*EscalationPo
 		return nil, err
 	}
 
-	var out *EscalationPolicy
+	var out *model.EscalationPolicy
 	err = response.unmarshallResponse(&out, TypeEscalationPolicy)
 	if err != nil {
 		return nil, err
@@ -66,8 +67,8 @@ func (c *Client) UpdateEscalationPolicy(policy *EscalationPolicy) (*EscalationPo
 	return out, nil
 }
 
-func (c *Client) ListEscalationPolicies() ([]*EscalationPolicy, error) {
-	var escalationPolicies []*EscalationPolicy
+func (c *Client) ListEscalationPolicies() ([]*model.EscalationPolicy, error) {
+	var escalationPolicies []*model.EscalationPolicy
 	var response = &PagerDutyResponse{}
 	var err error
 
@@ -80,7 +81,7 @@ func (c *Client) ListEscalationPolicies() ([]*EscalationPolicy, error) {
 			return nil, err
 		}
 
-		var responseEscalationPolicies []*EscalationPolicy
+		var responseEscalationPolicies []*model.EscalationPolicy
 
 		err = json.Unmarshal(response.body.Path(TypeEscalationPolicies).Bytes(), &responseEscalationPolicies)
 		if err != nil {

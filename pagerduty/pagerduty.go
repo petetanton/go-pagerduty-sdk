@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Jeffail/gabs/v2"
 	"github.com/google/go-querystring/query"
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/cache"
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
@@ -37,23 +38,17 @@ const (
 )
 
 type Client struct {
-	h   *http.Client
-	cfg *Config
+	h         *http.Client
+	cfg       *Config
+	userCache *cache.UserCache
 }
 
 type Config struct {
-	ApiToken   string
-	ApiUrl     string
-	FromHeader string
-	Logger     logrus.FieldLogger
-}
-
-type ApiObject struct {
-	Id      string `json:"id"`
-	Type    string `json:"type"`
-	Summary string `json:"summary"`
-	Self    string `json:"self,omitempty"`
-	HtmlUrl string `json:"html_url,omitempty"`
+	ApiToken     string
+	ApiUrl       string
+	FromHeader   string
+	Logger       logrus.FieldLogger
+	TypesToCache []string
 }
 
 func NewClient(cfg *Config) (*Client, error) {
@@ -69,7 +64,7 @@ func NewClient(cfg *Config) (*Client, error) {
 		return nil, errors.New("please set an api token")
 	}
 
-	return &Client{h: &http.Client{Timeout: 10 * time.Second}, cfg: cfg}, nil
+	return &Client{h: &http.Client{Timeout: 10 * time.Second}, cfg: cfg, userCache: cache.New()}, nil
 }
 
 func (c *Client) get(url string, params interface{}) (*PagerDutyResponse, error) {
@@ -202,4 +197,14 @@ func (c *Client) objectToJson(in interface{}, path string) (io.Reader, error) {
 
 	c.cfg.Logger.Debug(string(b))
 	return bytes.NewReader(b), nil
+}
+
+func (c *Client) shouldCacheType(tp string) bool {
+	for _, s := range c.cfg.TypesToCache {
+		if s == tp {
+			return true
+		}
+	}
+
+	return false
 }
