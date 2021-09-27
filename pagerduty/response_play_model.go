@@ -9,7 +9,7 @@ type ResponsePlay struct {
 	SubscribersMessage string       `json:"subscribers_message,omitempty"`
 	Responders         []*ApiObject `json:"responders,omitempty"`
 	RespondersMessage  string       `json:"responders_message,omitempty"`
-	Runability         string       `json:"runability"`
+	Runnability        string       `json:"runnability"`
 	ConferenceNumber   string       `json:"conference_number,omitempty"`
 	ConferenceUrl      string       `json:"conference_url,omitempty"`
 	ConferenceType     string       `json:"conference_type,omitempty"`
