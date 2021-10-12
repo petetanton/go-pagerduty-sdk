@@ -34,7 +34,7 @@ func (c *Client) GetResponsePlay(id string) (*model.ResponsePlay, error) {
 	}
 
 	var responsePlay *model.ResponsePlay
-	err = response.unmarshallResponse(&responsePlay, TypeResponsePlays)
+	err = response.unmarshallResponse(&responsePlay, TypeResponsePlay)
 	if err != nil {
 		return nil, err
 	}
