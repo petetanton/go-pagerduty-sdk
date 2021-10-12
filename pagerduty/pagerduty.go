@@ -131,7 +131,7 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	if response.StatusCode >= http.StatusBadRequest {
 		b, _ := ioutil.ReadAll(response.Body)
 		c.cfg.Logger.Errorf("Error on request to %s %s", r.Method, r.URL.String())
-		return nil, fmt.Errorf("got a %d response from PagerDuty with error: %s", response.StatusCode, string(b))
+		return nil, fmt.Errorf("[%s] %s: got a %d response from PagerDuty with error: %s", r.Method, r.URL, response.StatusCode, string(b))
 	}
 
 	defer response.Body.Close()
