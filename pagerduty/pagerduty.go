@@ -38,9 +38,10 @@ const (
 )
 
 type Client struct {
-	h         *http.Client
-	cfg       *Config
-	userCache *cache.UserCache
+	h                     *http.Client
+	cfg                   *Config
+	userCache             *cache.UserCache
+	escalationPolicyCache *cache.EscalationPolicyCache
 }
 
 type Config struct {
@@ -64,7 +65,7 @@ func NewClient(cfg *Config) (*Client, error) {
 		return nil, errors.New("please set an api token")
 	}
 
-	return &Client{h: &http.Client{Timeout: 10 * time.Second}, cfg: cfg, userCache: cache.New()}, nil
+	return &Client{h: &http.Client{Timeout: 20 * time.Second}, cfg: cfg, userCache: cache.NewUserCache(), escalationPolicyCache: cache.NewEscalationPolicyCache()}, nil
 }
 
 func (c *Client) get(url string, params interface{}) (*PagerDutyResponse, error) {
@@ -123,7 +124,7 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	}
 
 	if response.StatusCode == http.StatusTooManyRequests {
-		c.cfg.Logger.Debug("retrying due to 429")
+		c.cfg.Logger.Info("retrying due to 429")
 		time.Sleep(time.Second * 30)
 		return c.do(r)
 	}
@@ -165,11 +166,11 @@ type PagerDutyResponse struct {
 }
 
 func (r *PagerDutyResponse) hasMore() bool {
-	if r.body == nil {
+	if r == nil || r.body == nil {
 		return true
 	}
 
-	return r.body.Path("more").Data().(bool)
+	return r.body.Exists("more") && r.body.Path("more").Data().(bool)
 }
 
 func (r *PagerDutyResponse) nextOffset() float64 {

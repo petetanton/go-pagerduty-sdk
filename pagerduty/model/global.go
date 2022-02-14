@@ -7,3 +7,10 @@ type ApiObject struct {
 	Self    string `json:"self,omitempty"`
 	HtmlUrl string `json:"html_url,omitempty"`
 }
+
+type ApiListObject struct {
+	Limit  uint `json:"limit,omitempty"`
+	Offset uint `json:"offset,omitempty"`
+	More   bool `json:"more,omitempty"`
+	Total  uint `json:"total,omitempty"`
+}

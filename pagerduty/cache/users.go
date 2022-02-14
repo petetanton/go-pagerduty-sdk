@@ -10,7 +10,7 @@ type UserCache struct {
 	users map[string]*model.User
 }
 
-func New() *UserCache {
+func NewUserCache() *UserCache {
 	return &UserCache{
 		m:     sync.RWMutex{},
 		users: map[string]*model.User{},

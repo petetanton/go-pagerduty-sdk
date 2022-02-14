@@ -53,4 +53,5 @@ type OnCall struct {
 	EscalationPolicyReference ApiObject `json:"escalation_policy"`
 	Start                     string    `json:"start"`
 	End                       string    `json:"end"`
+	EscalationLevel           uint      `json:"escalation_level"`
 }

@@ -1,10 +1,12 @@
 package pagerduty
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 	"strings"
+
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
 func (c *Client) CreateTeam(team *model.Team) (*model.Team, error) {
@@ -91,4 +93,61 @@ func (c *Client) UpdateTeam(team *model.Team) (*model.Team, error) {
 
 func (c *Client) DeleteTeam(id string) error {
 	return c.delete(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeTeams, id))
+}
+
+func (c *Client) ListTeams() ([]*model.Team, error) {
+	var teams []*model.Team
+	var response = &PagerDutyResponse{}
+	var err error
+
+	for response.hasMore() {
+		response, err = c.get(fmt.Sprintf("%s/%s", c.cfg.ApiUrl, TypeTeams), PagerDutyRequest{
+			Limit:  100,
+			Offset: response.nextOffset(),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		var innerTeam []*model.Team
+		err = response.unmarshallResponse(&innerTeam, TypeTeams)
+		if err != nil {
+			return nil, err
+		}
+
+		teams = append(teams, innerTeam...)
+	}
+
+	return teams, err
+}
+
+func (c *Client) AddEscalationPolicyToTeam(teamId, epId string) error {
+	_, err := c.put(fmt.Sprintf("%s/%s/%s/%s/%s", c.cfg.ApiUrl, TypeTeams, teamId, TypeEscalationPolicies, epId), nil)
+	return err
+}
+
+func (c *Client) ListTeamMembers(teamId string) ([]*model.TeamMembership, error) {
+	var members []*model.TeamMembership
+	var response = &PagerDutyResponse{}
+	var err error
+
+	for response.hasMore() {
+		response, err = c.get(fmt.Sprintf("%s/%s/%s/members", c.cfg.ApiUrl, TypeTeams, teamId), PagerDutyRequest{
+			Limit:  100,
+			Offset: response.nextOffset(),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		var result *model.ListTeamMembersResponse
+		err := json.Unmarshal(response.body.Bytes(), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		members = append(members, result.Members...)
+	}
+
+	return members, nil
 }

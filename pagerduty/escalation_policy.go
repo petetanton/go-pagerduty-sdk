@@ -24,14 +24,24 @@ func (c *Client) CreateEscalationPolicy(policy *model.EscalationPolicy) (*model.
 		return nil, err
 	}
 
+	c.escalationPolicyCache.WriteEscalationPolicy(policy)
+
 	return out, nil
 }
 
 func (c *Client) DeleteEscalationPolicy(id string) error {
+	c.escalationPolicyCache.RemoveEscalationPolicy(id)
 	return c.delete(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeEscalationPolicies, id))
 }
 
 func (c *Client) GetEscalationPolicy(id string) (*model.EscalationPolicy, error) {
+	if c.shouldCacheType(TypeEscalationPolicy) {
+		policy := c.escalationPolicyCache.ReadEscalationPolicy(id)
+		if policy != nil {
+			return policy, nil
+		}
+	}
+
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeEscalationPolicies, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
@@ -42,6 +52,8 @@ func (c *Client) GetEscalationPolicy(id string) (*model.EscalationPolicy, error)
 	if err != nil {
 		return nil, err
 	}
+
+	c.escalationPolicyCache.WriteEscalationPolicy(escalationPolicy)
 
 	return escalationPolicy, nil
 }
@@ -63,6 +75,8 @@ func (c *Client) UpdateEscalationPolicy(policy *model.EscalationPolicy) (*model.
 	if err != nil {
 		return nil, err
 	}
+
+	c.escalationPolicyCache.WriteEscalationPolicy(policy)
 
 	return out, nil
 }
@@ -90,6 +104,8 @@ func (c *Client) ListEscalationPolicies() ([]*model.EscalationPolicy, error) {
 
 		escalationPolicies = append(escalationPolicies, responseEscalationPolicies...)
 	}
+
+	c.escalationPolicyCache.WriteEscalationPolicies(escalationPolicies)
 
 	return escalationPolicies, nil
 }
