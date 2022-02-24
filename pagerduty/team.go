@@ -140,6 +140,10 @@ func (c *Client) ListTeamMembers(teamId string) ([]*model.TeamMembership, error)
 			return nil, err
 		}
 
+		if response == nil {
+			return nil, fmt.Errorf("got no memberships for team %s", teamId)
+		}
+
 		var result *model.ListTeamMembersResponse
 		err := json.Unmarshal(response.body.Bytes(), &result)
 		if err != nil {

@@ -17,7 +17,7 @@ type ResponsePlay struct {
 
 type Responder struct {
 	Type                       string            `json:"type,omitempty"`
-	ID                         string            `json:"id,omitempty"`
+	Id                         string            `json:"id,omitempty"`
 	Name                       string            `json:"name,omitempty"`
 	Description                string            `json:"description,omitempty"`
 	NumLoops                   int               `json:"num_loops,omitempty"`
