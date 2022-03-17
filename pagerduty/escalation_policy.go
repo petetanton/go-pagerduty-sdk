@@ -47,6 +47,10 @@ func (c *Client) GetEscalationPolicy(id string) (*model.EscalationPolicy, error)
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var escalationPolicy *model.EscalationPolicy
 	err = response.unmarshallResponse(&escalationPolicy, TypeEscalationPolicy)
 	if err != nil {
