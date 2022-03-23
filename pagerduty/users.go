@@ -16,6 +16,10 @@ func (c *Client) CreateUser(user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, fmt.Errorf("cannot create user %v", user)
+	}
+
 	var out *model.User
 	err = response.unmarshallResponse(&out, TypeUser)
 
