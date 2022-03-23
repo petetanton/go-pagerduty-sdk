@@ -22,10 +22,11 @@ func (c *Client) CreateUser(user *model.User) (*model.User, error) {
 
 	var out *model.User
 	err = response.unmarshallResponse(&out, TypeUser)
+	if err != nil {
+		return nil, err
+	}
 
-	c.userCache.WriteUser(out)
-
-	return out, err
+	return out, c.userCache.WriteUser(out)
 }
 
 func (c *Client) GetUser(id string) (*model.User, error) {
@@ -47,9 +48,7 @@ func (c *Client) GetUser(id string) (*model.User, error) {
 		return nil, err
 	}
 
-	c.userCache.WriteUser(user)
-
-	return user, nil
+	return user, c.userCache.WriteUser(user)
 }
 
 func (c *Client) ListUsers() ([]*model.User, error) {
@@ -75,8 +74,7 @@ func (c *Client) ListUsers() ([]*model.User, error) {
 		users = append(users, innerUser...)
 	}
 
-	c.userCache.WriteUsers(users)
-	return users, err
+	return users, c.userCache.WriteUsers(users)
 }
 
 func (c *Client) UpdateUser(user *model.User) (*model.User, error) {
@@ -97,9 +95,7 @@ func (c *Client) UpdateUser(user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
-	c.userCache.WriteUser(out)
-
-	return out, nil
+	return out, c.userCache.WriteUser(out)
 }
 
 func (c *Client) DeleteUser(id string) error {

@@ -65,7 +65,7 @@ func NewClient(cfg *Config) (*Client, error) {
 		return nil, errors.New("please set an api token")
 	}
 
-	return &Client{h: &http.Client{Timeout: 20 * time.Second}, cfg: cfg, userCache: cache.NewUserCache(), escalationPolicyCache: cache.NewEscalationPolicyCache()}, nil
+	return &Client{h: &http.Client{Timeout: 20 * time.Second}, cfg: cfg, userCache: cache.NewUserCache(cfg.Logger), escalationPolicyCache: cache.NewEscalationPolicyCache()}, nil
 }
 
 func (c *Client) get(url string, params interface{}) (*PagerDutyResponse, error) {
