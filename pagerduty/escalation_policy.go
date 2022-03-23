@@ -68,6 +68,7 @@ func (c *Client) UpdateEscalationPolicy(policy *model.EscalationPolicy) (*model.
 	if policy.Id == "" {
 		return nil, errors.New("id needs to be set on a policy to update it")
 	}
+
 	policy.Type = TypeEscalationPolicy
 	reader, err := c.objectToJson(policy, TypeEscalationPolicy)
 	if err != nil {

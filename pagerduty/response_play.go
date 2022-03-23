@@ -1,9 +1,11 @@
 package pagerduty
 
 import (
+	"errors"
 	"fmt"
-	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 	"strings"
+
+	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
 func (c *Client) CreateResponsePlay(responsePlay *model.ResponsePlay) (*model.ResponsePlay, error) {
@@ -84,6 +86,10 @@ func (c *Client) RunResponsePlay(responsePlayId, incidentId string) error {
 }
 
 func (c *Client) UpdateResponsePlay(responsePlay *model.ResponsePlay) (*model.ResponsePlay, error) {
+	if responsePlay.Id == "" {
+		return nil, errors.New("id needs to be set on a response play to update it")
+	}
+
 	responsePlay.Type = TypeResponsePlay
 	reader, err := c.objectToJson(responsePlay, TypeResponsePlay)
 	if err != nil {
