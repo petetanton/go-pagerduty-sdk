@@ -13,7 +13,7 @@ type UserCache struct {
 func NewUserCache() *UserCache {
 	return &UserCache{
 		m:     sync.RWMutex{},
-		users: map[string]*model.User{},
+		users: make(map[string]*model.User),
 	}
 }
 
