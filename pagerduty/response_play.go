@@ -35,6 +35,10 @@ func (c *Client) GetResponsePlay(id string) (*model.ResponsePlay, error) {
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var responsePlay *model.ResponsePlay
 	err = response.unmarshallResponse(&responsePlay, TypeResponsePlay)
 	if err != nil {
