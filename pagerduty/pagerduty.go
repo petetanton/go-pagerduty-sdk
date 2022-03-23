@@ -123,6 +123,8 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 		return nil, err
 	}
 
+	defer response.Body.Close()
+
 	if response.StatusCode == http.StatusTooManyRequests {
 		c.cfg.Logger.Info("retrying due to 429")
 		time.Sleep(time.Second * 30)
@@ -138,8 +140,6 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	if response.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-
-	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusNoContent {
 		return nil, nil
