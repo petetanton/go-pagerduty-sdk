@@ -160,7 +160,12 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 
 func parseErrorResponse(body *gabs.Container) string {
 	if body.ExistsP("error.errors") {
-		return strings.Join(body.Path("error.errors").Data().([]string), ",")
+		var errStr []string
+		for _, container := range body.Path("error.errors").Children() {
+			errStr = append(errStr, container.Data().(string))
+		}
+
+		return strings.Join(errStr, ",")
 	}
 
 	return body.String()
