@@ -31,7 +31,7 @@ func (uc *UserCache) ReadUser(id string) *model.User {
 
 func (uc *UserCache) WriteUser(user *model.User) error {
 	uc.logger.Debugf("writing user %s to cache", user)
-	if user.Id == "" {
+	if user == nil || user.Id == "" {
 		return errors.New("a user cannot be cached without an ID")
 	}
 	uc.m.Lock()
@@ -47,7 +47,7 @@ func (uc *UserCache) WriteUsers(users []*model.User) error {
 	uc.m.Lock()
 	defer uc.m.Unlock()
 	for _, user := range users {
-		if user.Id == "" {
+		if user == nil || user.Id == "" {
 			return errors.New("a user cannot be cached without an ID")
 		}
 		uc.users[user.Id] = user
