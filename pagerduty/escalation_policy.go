@@ -2,7 +2,9 @@ package pagerduty
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+
 	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
@@ -63,6 +65,9 @@ func (c *Client) GetEscalationPolicy(id string) (*model.EscalationPolicy, error)
 }
 
 func (c *Client) UpdateEscalationPolicy(policy *model.EscalationPolicy) (*model.EscalationPolicy, error) {
+	if policy.Id == "" {
+		return nil, errors.New("id needs to be set on a policy to update it")
+	}
 	policy.Type = TypeEscalationPolicy
 	reader, err := c.objectToJson(policy, TypeEscalationPolicy)
 	if err != nil {
