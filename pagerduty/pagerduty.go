@@ -124,6 +124,7 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	}
 
 	defer response.Body.Close()
+	c.cfg.Logger.Debugf("%s: %s status: %d", r.Method, r.URL.String(), response.StatusCode)
 
 	if response.StatusCode == http.StatusTooManyRequests {
 		c.cfg.Logger.Info("retrying due to 429")
@@ -150,9 +151,20 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 		return nil, err
 	}
 
+	if response.StatusCode >= http.StatusBadRequest {
+		return nil, fmt.Errorf("got a %d response from PagerDuty: %s", response.StatusCode, parseErrorResponse(body))
+	}
+
 	return &PagerDutyResponse{body: body}, nil
 }
 
+func parseErrorResponse(body *gabs.Container) string {
+	if body.ExistsP("error.errors") {
+		return strings.Join(body.Path("error.errors").Data().([]string), ",")
+	}
+
+	return body.String()
+}
 func DefaultPagerDutyRequest() *PagerDutyRequest {
 	return &PagerDutyRequest{
 		Offset: 0,
