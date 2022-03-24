@@ -160,6 +160,8 @@ func (c *Client) do(r *http.Request, retry uint) (*PagerDutyResponse, error) {
 	}
 
 	if response.StatusCode >= http.StatusBadRequest {
+		c.cfg.Logger.Errorf("%s: %s status: %d,body: %s", r.Method, r.URL.String(), response.StatusCode, parseErrorResponse(body))
+
 		return nil, fmt.Errorf("got a %d response from PagerDuty: %s", response.StatusCode, parseErrorResponse(body))
 	}
 
