@@ -42,6 +42,12 @@ type ScheduledAction struct {
 }
 
 type AlertGroupingParameters struct {
-	Type   string                 `json:"type"`
-	Config map[string]interface{} `json:"config"`
+	Type   string               `json:"type,omitempty"`
+	Config *AlertGroupingConfig `json:"config,omitempty"`
+}
+
+type AlertGroupingConfig struct {
+	Timeout   int      `json:"timeout,omitempty"`
+	Aggregate string   `json:"aggregate,omitempty"`
+	Fields    []string `json:"fields,omitempty"`
 }
