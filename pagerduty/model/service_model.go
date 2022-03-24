@@ -13,7 +13,7 @@ type Service struct {
 	ScheduledActions        []*ScheduledAction       `json:"scheduled_actions,omitempty"`
 	Addons                  []*ApiObject             `json:"addons,omitempty"`
 	AlertCreation           string                   `json:"alert_creation,omitempty"`
-	AlertGrouping           string                   `json:"alert_grouping"`
+	AlertGrouping           string                   `json:"alert_grouping,omitempty"`
 	AlertGroupingTimeout    uint                     `json:"alert_grouping_timeout,omitempty"`
 	AlertGroupingParameters *AlertGroupingParameters `json:"alert_grouping_parameters,omitempty"`
 	CreatedAt               string                   `json:"created_at,omitempty"`
