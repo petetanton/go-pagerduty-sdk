@@ -2,17 +2,24 @@ package model
 
 type Service struct {
 	ApiObject
-	Name                    string                   `json:"name"`
-	Description             string                   `json:"description"`
+	Name                    string                   `json:"name,omitempty"`
+	Description             string                   `json:"description,omitempty"`
 	AutoResolveTimeout      uint                     `json:"auto_resolve_timeout"`
 	AcknowledgementTimeout  uint                     `json:"acknowledgement_timeout"`
-	Status                  string                   `json:"status"`
+	Status                  string                   `json:"status,omitempty"`
 	EscalationPolicy        *ApiObject               `json:"escalation_policy,omitempty"`
 	IncidentUrgencyRule     *IncidentUrgencyRule     `json:"incident_urgency_rule,omitempty"`
 	SupportHours            *SupportHours            `json:"support_hours,omitempty"`
 	ScheduledActions        []*ScheduledAction       `json:"scheduled_actions,omitempty"`
-	AlertCreation           string                   `json:"alert_creation"`
+	Addons                  []*ApiObject             `json:"addons,omitempty"`
+	AlertCreation           string                   `json:"alert_creation,omitempty"`
+	AlertGrouping           string                   `json:"alert_grouping"`
+	AlertGroupingTimeout    uint                     `json:"alert_grouping_timeout,omitempty"`
 	AlertGroupingParameters *AlertGroupingParameters `json:"alert_grouping_parameters,omitempty"`
+	CreatedAt               string                   `json:"created_at,omitempty"`
+	Integrations            []*ApiObject             `json:"integrations,omitempty"`
+	LastIncidentTimestamp   string                   `json:"last_incident_timestamp,omitempty"`
+	Teams                   []*ApiObject             `json:"teams,omitempty"`
 }
 
 type IncidentUrgencyRule struct {
