@@ -16,6 +16,10 @@ func (c *Client) CreateService(service *model.Service) (*model.Service, error) {
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var out *model.Service
 	err = response.unmarshallResponse(&out, TypeService)
 
@@ -26,6 +30,10 @@ func (c *Client) GetService(id string) (*model.Service, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeServices, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var service *model.Service
@@ -73,6 +81,10 @@ func (c *Client) UpdateService(service *model.Service) (*model.Service, error) {
 	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeServices, service.Id), reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var out *model.Service

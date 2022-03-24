@@ -19,6 +19,10 @@ func (c *Client) CreateResponsePlay(responsePlay *model.ResponsePlay) (*model.Re
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var out *model.ResponsePlay
 	err = response.unmarshallResponse(&out, TypeResponsePlay)
 
@@ -103,6 +107,10 @@ func (c *Client) UpdateResponsePlay(responsePlay *model.ResponsePlay) (*model.Re
 	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeResponsePlays, responsePlay.Id), reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var out *model.ResponsePlay

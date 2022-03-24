@@ -20,6 +20,10 @@ func (c *Client) CreateTeam(team *model.Team) (*model.Team, error) {
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var out *model.Team
 	err = response.unmarshallResponse(&out, TypeTeam)
 
@@ -30,6 +34,10 @@ func (c *Client) GetTeam(id string) (*model.Team, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeTeams, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var team *model.Team
@@ -80,6 +88,10 @@ func (c *Client) UpdateTeam(team *model.Team) (*model.Team, error) {
 	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeTeams, team.Id), reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var out *model.Team

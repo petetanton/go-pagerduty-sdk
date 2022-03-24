@@ -16,6 +16,10 @@ func (c *Client) CreateSchedule(schedule *model.Schedule, overflow bool) (*model
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var out *model.Schedule
 	err = response.unmarshallResponse(&out, TypeSchedule)
 
@@ -26,6 +30,10 @@ func (c *Client) GetSchedule(id string) (*model.Schedule, error) {
 	response, err := c.get(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeSchedules, id), DefaultPagerDutyRequest())
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var service *model.Schedule
@@ -73,6 +81,10 @@ func (c *Client) UpdateSchedule(service *model.Schedule, overflow bool) (*model.
 	response, err := c.put(fmt.Sprintf("%s/%s/%s?overflow=%t", c.cfg.ApiUrl, TypeSchedules, service.Id, overflow), reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var out *model.Schedule

@@ -20,6 +20,10 @@ func (c *Client) CreateEscalationPolicy(policy *model.EscalationPolicy) (*model.
 		return nil, err
 	}
 
+	if response == nil {
+		return nil, nil
+	}
+
 	var out *model.EscalationPolicy
 	err = response.unmarshallResponse(&out, TypeEscalationPolicy)
 	if err != nil {
@@ -78,6 +82,10 @@ func (c *Client) UpdateEscalationPolicy(policy *model.EscalationPolicy) (*model.
 	response, err := c.put(fmt.Sprintf("%s/%s/%s", c.cfg.ApiUrl, TypeEscalationPolicies, policy.Id), reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if response == nil {
+		return nil, nil
 	}
 
 	var out *model.EscalationPolicy
