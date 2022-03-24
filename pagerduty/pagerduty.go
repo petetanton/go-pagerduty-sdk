@@ -112,6 +112,8 @@ func (c *Client) delete(url string) error {
 }
 
 func (c *Client) do(r *http.Request, retry uint) (*PagerDutyResponse, error) {
+	//Error: Get "https://api.pagerduty.com/users/P6GNAHL?limit=100&offset=0": http2: server sent GOAWAY and closed the connection; LastStreamID=199, ErrCode=NO_ERROR, debug=""
+
 	c.cfg.Logger.Debugf("%s: %s", r.Method, r.URL.String())
 	r.Header.Add("Authorization", fmt.Sprintf("Token token=%s", c.cfg.ApiToken))
 	r.Header.Add("Content-Type", "application/json")
@@ -122,6 +124,11 @@ func (c *Client) do(r *http.Request, retry uint) (*PagerDutyResponse, error) {
 
 	response, err := c.h.Do(r)
 	if err != nil {
+		if strings.Contains(err.Error(), "GOAWAY") {
+			c.cfg.Logger.Errorf("error contains 'GOAWAY' so retrying: %v", err)
+			time.Sleep(time.Minute)
+			return c.do(r, retry)
+		}
 		return nil, err
 	}
 
