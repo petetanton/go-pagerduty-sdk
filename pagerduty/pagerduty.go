@@ -35,6 +35,8 @@ const (
 	TypeContactMethods     = "contact_methods"
 	TypeResponsePlay       = "response_play"
 	TypeResponsePlays      = "response_plays"
+
+	maxRetries = 5
 )
 
 type Client struct {
@@ -78,7 +80,7 @@ func (c *Client) get(url string, params interface{}) (*PagerDutyResponse, error)
 		return nil, err
 	}
 
-	return c.do(request)
+	return c.do(request, maxRetries)
 }
 
 func (c *Client) post(url string, body io.Reader) (*PagerDutyResponse, error) {
@@ -87,7 +89,7 @@ func (c *Client) post(url string, body io.Reader) (*PagerDutyResponse, error) {
 		return nil, err
 	}
 
-	return c.do(request)
+	return c.do(request, maxRetries)
 }
 
 func (c *Client) put(url string, body io.Reader) (*PagerDutyResponse, error) {
@@ -96,7 +98,7 @@ func (c *Client) put(url string, body io.Reader) (*PagerDutyResponse, error) {
 		return nil, err
 	}
 
-	return c.do(request)
+	return c.do(request, maxRetries)
 }
 
 func (c *Client) delete(url string) error {
@@ -105,11 +107,11 @@ func (c *Client) delete(url string) error {
 		return err
 	}
 
-	_, err = c.do(request)
+	_, err = c.do(request, maxRetries)
 	return err
 }
 
-func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
+func (c *Client) do(r *http.Request, retry uint) (*PagerDutyResponse, error) {
 	c.cfg.Logger.Debugf("%s: %s", r.Method, r.URL.String())
 	r.Header.Add("Authorization", fmt.Sprintf("Token token=%s", c.cfg.ApiToken))
 	r.Header.Add("Content-Type", "application/json")
@@ -129,12 +131,18 @@ func (c *Client) do(r *http.Request) (*PagerDutyResponse, error) {
 	if response.StatusCode == http.StatusTooManyRequests {
 		c.cfg.Logger.Info("retrying due to 429")
 		time.Sleep(time.Second * 30)
-		return c.do(r)
+		return c.do(r, retry)
 	}
 
 	if response.StatusCode >= http.StatusInternalServerError {
 		b, _ := ioutil.ReadAll(response.Body)
 		c.cfg.Logger.Errorf("Error on request to %s %s", r.Method, r.URL.String())
+		if retry > 0 {
+			c.cfg.Logger.Info("retrying due to 500")
+			time.Sleep(time.Second * 30)
+			return c.do(r, retry-1)
+		}
+
 		return nil, fmt.Errorf("[%s] %s: got a %d response from PagerDuty with error: %s", r.Method, r.URL, response.StatusCode, string(b))
 	}
 

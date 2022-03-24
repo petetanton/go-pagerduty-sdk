@@ -1,7 +1,9 @@
 package pagerduty
 
 import (
+	"encoding/json"
 	"fmt"
+
 	"github.com/petetanton/go-pagerduty-sdk/pagerduty/model"
 )
 
@@ -13,7 +15,8 @@ func (c *Client) CreateService(service *model.Service) (*model.Service, error) {
 
 	response, err := c.post(fmt.Sprintf("%s/%s", c.cfg.ApiUrl, TypeServices), reader)
 	if err != nil {
-		return nil, err
+		rBytes, _ := json.Marshal(service)
+		return nil, fmt.Errorf("got an error when trying to create service: %s. Msg: %s", string(rBytes), err.Error())
 	}
 
 	if response == nil {
