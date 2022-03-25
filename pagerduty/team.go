@@ -2,7 +2,6 @@ package pagerduty
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -50,16 +49,37 @@ func (c *Client) GetTeam(id string) (*model.Team, error) {
 }
 
 func (c *Client) GetTeamMembers(id string) ([]*model.TeamMembership, error) {
+	var teamMemberships []*model.TeamMembership
+
 	response, err := c.get(fmt.Sprintf("%s/%s/%s/members", c.cfg.ApiUrl, TypeTeams, id), &PagerDutyRequest{Limit: 100, Includes: []string{"users"}})
 	if err != nil {
 		return nil, err
 	}
 
 	if response.hasMore() {
-		return nil, errors.New("please implement pagination")
-	}
+		response, err = c.get(fmt.Sprintf("%s/%s/%s/members", c.cfg.ApiUrl, TypeTeams, id), &PagerDutyRequest{
+			Limit:    100,
+			Offset:   response.nextOffset(),
+			Includes: []string{"users"},
+		})
+		if err != nil {
+			return nil, err
+		}
 
-	var teamMemberships []*model.TeamMembership
+		if response == nil {
+			return nil, fmt.Errorf("got no memberships for team %s", id)
+		}
+
+		var result *model.ListTeamMembersResponse
+		err := json.Unmarshal(response.body.Bytes(), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		var members []*model.TeamMembership
+
+		members = append(members, result.Members...)
+	}
 
 	err = response.unmarshallResponse(&teamMemberships, "members")
 	if err != nil {
