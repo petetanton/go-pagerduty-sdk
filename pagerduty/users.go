@@ -42,6 +42,11 @@ func (c *Client) GetUser(id string) (*model.User, error) {
 		return nil, err
 	}
 
+	if response == nil {
+		c.cfg.Logger.Warnf("could not find user %s", id)
+		return nil, nil
+	}
+
 	var user *model.User
 	err = response.unmarshallResponse(&user, TypeUser)
 	if err != nil {
