@@ -129,6 +129,12 @@ func (c *Client) do(r *http.Request, retry uint) (*PagerDutyResponse, error) {
 			time.Sleep(time.Minute)
 			return c.do(r, retry)
 		}
+
+		if strings.Contains(err.Error(), "Client.Timeout") {
+			c.cfg.Logger.Errorf("error contains 'Client.Timeout' so retrying: %v", err)
+			time.Sleep(time.Minute)
+			return c.do(r, retry)
+		}
 		return nil, err
 	}
 
