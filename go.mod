@@ -1,6 +1,6 @@
 module github.com/petetanton/go-pagerduty-sdk
 
-go 1.16
+go 1.19
 
 require (
 	github.com/Jeffail/gabs/v2 v2.6.1
