@@ -7,7 +7,7 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Code checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Make tag
         id: tag-maker
         run: |
